@@ -24,10 +24,11 @@ env:
   # github.repository as <account>/<repo>
 #  IMAGE_NAME: ${{ github.repository }}
 #  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-  ANSIBLE_VERSIONS: [2.10.17, 8.1.0]
+#  ANSIBLE_VERSIONS: [2.10.17, 8.1.0]
 
 
 jobs:
+  build:
   call-deploy-workflow:
     strategy:
       matrix:
