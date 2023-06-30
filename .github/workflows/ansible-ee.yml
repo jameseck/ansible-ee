@@ -28,7 +28,6 @@ env:
 
 
 jobs:
-  build:
   call-deploy-workflow:
     strategy:
       matrix:
