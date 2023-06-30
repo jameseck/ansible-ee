@@ -31,7 +31,8 @@ jobs:
   call-deploy-workflow:
     strategy:
       matrix:
-        ansible_version: ${{ env.ANSIBLE_VERSIONS }}
+        #ansible_version: ${{ env.ANSIBLE_VERSIONS }}
+        ansible_version: [2.10.17, 8.1.0]
     uses: jameseck/ansible-ee/.github/workflows/deploy.yml@main
     with:
       EE_FOLDER_NAME: ansible-ee
