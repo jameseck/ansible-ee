@@ -22,8 +22,8 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
-  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+#  IMAGE_NAME: ${{ github.repository }}
+#  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   ANSIBLE_VERSIONS: [2.10.17, 8.1.0]
 
 
@@ -36,8 +36,9 @@ jobs:
     uses: jameseck/ansible-ee/.github/workflows/deploy.yml@main
     with:
       EE_FOLDER_NAME: ansible-ee
+      EE_IMAGE_NAME: ansible-ee
       #EE_IMAGE_NAME: ${{ (env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'master') && env.IMAGE_NAME || env.IMAGE_NAME + '-' env.BRANCH_NAME }}
-      EE_IMAGE_NAME: ${{ contains(fromJSON('["main", "master"]'), env.BRANCH_NAME) && env.IMAGE_NAME || env.IMAGE_NAME + '-' env.BRANCH_NAME }}
+      #EE_IMAGE_NAME: ${{ contains(fromJSON('["main", "master"]'), env.BRANCH_NAME) && env.IMAGE_NAME || env.IMAGE_NAME + '-' env.BRANCH_NAME }}
       EE_IMAGE_TAG: ${{ matrix.ansible_version }}
       EE_ANSIBLE_VERSION: ${{ matrix.ansible_version }}
 #      QUAY_USER: 'nleiva'

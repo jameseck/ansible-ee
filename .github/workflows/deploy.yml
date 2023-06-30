@@ -32,6 +32,11 @@ on:
         required: true
         type: string
 
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  EE_IMAGE_NAME: ${{ contains(fromJSON('["main", "master"]'), env.BRANCH_NAME) && inputs.EE_IMAGE_NAME || inputs.EE_IMAGE_NAME + '-' env.BRANCH_NAME }}
+
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
@@ -58,17 +63,17 @@ jobs:
           username: ${{ inputs.EE_REGISTRY_USERNAME }}
           password: ${{ secrets.EE_REGISTRY_PASSWORD }}
 
-      - name: Build ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} image
+      - name: Build ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} image
         id: image-build
         run: |
-          ansible-builder build -v 3 -t ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} \
+          ansible-builder build -v 3 -t ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} \
           --tag=${{ inputs.EE_FOLDER_NAME }}:${{ inputs.EE_ANSIBLE_VERSION }} \
         working-directory: ./${{ inputs.EE_FOLDER_NAME }}
 
-      - name: Run basic tests with ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} image
+      - name: Run basic tests with ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} image
         run: |
           ansible-navigator --mode stdout --pull-policy never \
-            --execution-environment-image ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} \
+            --execution-environment-image ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} \
             run tests.yml
         working-directory: ./${{ inputs.EE_FOLDER_NAME }}
 
@@ -77,7 +82,7 @@ jobs:
         uses: docker/metadata-action@v4.4.0
         with:
           images: |
-            ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }}
+            ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
 
@@ -87,7 +92,7 @@ jobs:
         id: push-to-registry
         uses: redhat-actions/push-to-registry@v2
         with:
-          image: ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }}
+          image: ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }}
           tags: ${{ steps.meta.outputs.tags }}
           registry: ${{ inputs.EE_REGISTRY }}
           username: ${{ inputs.EE_REGISTRY_USERNAME }}
