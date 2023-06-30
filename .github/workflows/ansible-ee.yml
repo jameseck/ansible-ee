@@ -32,7 +32,7 @@ jobs:
     strategy:
       matrix:
         ansible_version: ${{ env.ANSIBLE_VERSIONS }}
-    uses: "jameseck/ansible-ee/.github/workflows/deploy.yml@${{ env.BRANCH_NAME }}"
+    uses: jameseck/ansible-ee/.github/workflows/deploy.yml@main
     with:
       EE_FOLDER_NAME: ansible-ee
       #EE_IMAGE_NAME: ${{ (env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'master') && env.IMAGE_NAME || env.IMAGE_NAME + '-' env.BRANCH_NAME }}
