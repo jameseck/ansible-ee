@@ -1,0 +1,95 @@
+# Workflow name
+name: EE build
+
+# Controls when the workflow will run
+on:
+  # This is a reusable workflow
+  workflow_call:
+    inputs:
+      EE_FOLDER_NAME:
+        description: 'name of the folder where the EE is located (will become the name of the EE)'
+        required: true
+        type: string
+      EE_IMAGE_NAME:
+        description: Name of the image
+        required: true
+        type: string
+      EE_ANSIBLE_VERSION:
+        description: 'Version of ansible to install'
+        required: true
+        type: string
+      EE_REGISTRY:
+        description: Registry to push the images
+        required: true
+        type: string
+      EE_REGISTRY_USERNAME:
+        description: Username for the registry
+        required: true
+        type: string
+    secrets:
+      EE_REGISTRY_PASSWORD:
+        description: Password for the registry
+        required: true
+        type: string
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: deploy
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install podman
+          pip install ansible-core ansible-builder ansible-navigator
+
+      - name: Log in to image registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ${{ inputs.EE_REGISTRY }}
+          username: ${{ inputs.EE_REGISTRY_USERNAME }}
+          password: ${{ secrets.EE_REGISTRY_PASSWORD }}
+
+      - name: Build ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} image
+        id: image-build
+        run: |
+          ansible-builder build -v 3 -t ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} \
+          --tag=${{ inputs.EE_FOLDER_NAME }}:${{ inputs.EE_ANSIBLE_VERSION }} \
+        working-directory: ./${{ inputs.EE_FOLDER_NAME }}
+
+      - name: Run basic tests with ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} image
+        run: |
+          ansible-navigator --mode stdout --pull-policy never \
+            --execution-environment-image ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} \
+            run tests.yml
+        working-directory: ./${{ inputs.EE_FOLDER_NAME }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4.4.0
+        with:
+          images: |
+            ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }}
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+
+      # Podman Login action (https://github.com/redhat-actions/podman-login) also be used to log in,
+      # in which case 'username' and 'password' can be omitted.
+      - name: Push to registry
+        id: push-to-registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ inputs.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }}
+          tags: ${{ steps.meta.outputs.tags }}
+          registry: ${{ inputs.EE_REGISTRY }}
+          username: ${{ inputs.EE_REGISTRY_USERNAME }}
+          password: ${{ inputs.EE_REGISTRY_PASSWORD }}
+        if: ${{ github.event_name != 'pull_request' }} # Don't push on PR

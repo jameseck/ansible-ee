@@ -1,0 +1,48 @@
+# Workflow Name
+name: Ansible EE build
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events but only for the master branch
+  push:
+    branches:
+      - master
+    paths:
+      - 'ansible-ee/**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+#  # Schedule workflow run at 06:00 on Sunday
+#  schedule:
+#    - cron: '0 6 * * 0'
+
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  ANSIBLE_VERSIONS: [2.10.17, 8.1.0]
+
+
+jobs:
+  call-deploy-workflow:
+    strategy:
+      matrix:
+        ansible_version: ${{ env.ANSIBLE_VERSIONS }}
+    uses:  jameseck/ansible-ee/.github/workflows/deploy.yml@master
+    with:
+      EE_FOLDER_NAME: ansible-ee
+      #EE_IMAGE_NAME: ${{ (env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'master') && env.IMAGE_NAME || env.IMAGE_NAME + '-' env.BRANCH_NAME }}
+      EE_IMAGE_NAME: ${{ contains(fromJSON('["main", "master"]'), env.BRANCH_NAME) && env.IMAGE_NAME || env.IMAGE_NAME + '-' env.BRANCH_NAME }}
+      EE_IMAGE_TAG: ${{ matrix.ansible_version }}
+      EE_ANSIBLE_VERSION: ${{ matrix.ansible_version }}
+#      QUAY_USER: 'nleiva'
+    secrets: inherit
+#  secrets:
+#    REDHAT_USERNAME: ${{ secrets.REDHAT_USERNAME }}
+#    REDHAT_PASSWORD: ${{ secrets.REDHAT_PASSWORD }}
+#    QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
+#    AH_TOKEN: ${{ secrets.AH_TOKEN }}

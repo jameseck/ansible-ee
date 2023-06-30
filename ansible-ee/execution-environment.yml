@@ -1,0 +1,29 @@
+---
+version: 3
+
+images:
+  base_image:
+    #name: quay.io/ansible/ansible-runner:stable-2.12-latest
+    name: registry.access.redhat.com/ubi9/python-311:latest
+
+#ansible_config: 'ansible.cfg'
+
+dependencies:
+  system: bindep.txt
+  python: requirements.txt
+
+additional_build_files:
+  - src: bw
+    dest: scripts
+
+additional_build_steps:
+  append_final:
+    # The ansible package contains a curated set of Ansible collections in addition to ansible-core, include it in the EE
+    # here since it can't be in requirements.txt for now: https://github.com/ansible/ansible-builder/issues/323
+    - RUN pip3 install ansible
+    - ADD _build/scripts/bw /usr/local/bin
+    - RUN \
+    -   curl -Lo /tmp/bw-linux.zip $(curl -s https://api.github.com/repos/bitwarden/clients/releases | jq -r 'first(.[] | select(.tag_name|test("cli-."))) | .assets[] | select(.name|test("bw-linux.*zip")) | .browser_download_url') && \
+    -   unzip /tmp/bw-linux.zip -d /tmp && \
+    -   mv /tmp/bw /usr/local/bin/bwcli && \
+    -   chmod +x /usr/local/bin/bwcli /usr/local/bin/bw
