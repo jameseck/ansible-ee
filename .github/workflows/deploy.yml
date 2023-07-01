@@ -81,7 +81,7 @@ jobs:
         run: |
           ansible-builder build \
             -v 3 \
-            --build-arg ANSIBLE_INSTALL_REFS="ansible==${inputs.EE_ANSIBLE_VERSION} ansible-runner" \
+            --build-arg ANSIBLE_INSTALL_REFS="ansible==${{inputs.EE_ANSIBLE_VERSION}} ansible-runner" \
             -t ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} \
             --tag=${{ inputs.EE_FOLDER_NAME }}:${{ inputs.EE_ANSIBLE_VERSION }} \
         working-directory: ./${{ inputs.EE_FOLDER_NAME }}
