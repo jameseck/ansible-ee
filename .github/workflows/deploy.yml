@@ -33,7 +33,7 @@ on:
     secrets:
       EE_REGISTRY_PASSWORD:
         description: Password for the registry
-        required: true
+        required: false
 
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
@@ -74,7 +74,7 @@ jobs:
         with:
           registry: ${{ inputs.EE_REGISTRY }}
           username: ${{ inputs.EE_REGISTRY_USERNAME }}
-          password: ${{ secrets.EE_REGISTRY_PASSWORD }}
+          password: ${{ secrets.EE_REGISTRY_PASSWORD || secrets.GITHUB_TOKEN }}
 
       - name: Build ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} image
         id: image-build
@@ -109,5 +109,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           registry: ${{ inputs.EE_REGISTRY }}
           username: ${{ inputs.EE_REGISTRY_USERNAME }}
-          password: ${{ inputs.EE_REGISTRY_PASSWORD }}
+          password: ${{ secrets.EE_REGISTRY_PASSWORD || secrets.GITHUB_TOKEN }}
         if: ${{ github.event_name != 'pull_request' }} # Don't push on PR
