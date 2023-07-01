@@ -28,7 +28,7 @@ env:
 
 
 jobs:
-  call-deploy-workflow:
+  call-deploy:
     strategy:
       matrix:
         #ansible_version: ${{ env.ANSIBLE_VERSIONS }}
