@@ -1,5 +1,5 @@
 # Workflow name
-name: EE build
+name: EE deploy
 
 # Controls when the workflow will run
 on:
@@ -30,7 +30,6 @@ on:
       EE_REGISTRY_PASSWORD:
         description: Password for the registry
         required: true
-        type: string
 
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
