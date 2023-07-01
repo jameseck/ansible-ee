@@ -34,7 +34,8 @@ on:
 
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-  EE_IMAGE_NAME: ${{ contains(fromJSON('["main", "master"]'), env.BRANCH_NAME) && inputs.EE_IMAGE_NAME || inputs.EE_IMAGE_NAME + '-' env.BRANCH_NAME }}
+  # v -> does not work
+  #EE_IMAGE_NAME: ${{ contains(fromJSON('["main", "master"]'), env.BRANCH_NAME) && inputs.EE_IMAGE_NAME || inputs.EE_IMAGE_NAME + '-' env.BRANCH_NAME }}
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -45,6 +46,15 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+
+      - name: Set EE_IMAGE_NAME
+        run: |
+          set -euo pipefail
+          if [ "${BRANCH_NAME}" == "main" ] || [ "${BRANCH_NAME}" == "master" ]; then
+            echo "EE_IMAGE_NAME=${{inputs.EE_IMAGE_NAME}}" >> $GITHUB_ENV
+          else
+            echo "EE_IMAGE_NAME=${{inputs.EE_IMAGE_NAME}}-${BRANCH_NAME}" >> $GITHUB_ENV
+          fi
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
