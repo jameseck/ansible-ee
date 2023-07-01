@@ -79,8 +79,11 @@ jobs:
       - name: Build ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} image
         id: image-build
         run: |
-          ansible-builder build -v 3 -t ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} \
-          --tag=${{ inputs.EE_FOLDER_NAME }}:${{ inputs.EE_ANSIBLE_VERSION }} \
+          ansible-builder build \
+            -v 3 \
+            --build-arg ANSIBLE_INSTALL_REFS="ansible==${inputs.EE_ANSIBLE_VERSION} ansible-runner" \
+            -t ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} \
+            --tag=${{ inputs.EE_FOLDER_NAME }}:${{ inputs.EE_ANSIBLE_VERSION }} \
         working-directory: ./${{ inputs.EE_FOLDER_NAME }}
 
       - name: Run basic tests with ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }} image
