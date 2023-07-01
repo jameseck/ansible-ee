@@ -43,6 +43,8 @@ jobs:
       #EE_IMAGE_NAME: ${{ contains(fromJSON('["main", "master"]'), env.BRANCH_NAME) && env.IMAGE_NAME || env.IMAGE_NAME + '-' env.BRANCH_NAME }}
       EE_IMAGE_TAG: ${{ matrix.ansible_version }}
       EE_ANSIBLE_VERSION: ${{ matrix.ansible_version }}
+      EE_REGISTRY: ghcr.io
+      EE_USERNAME: ${{ github.repository }}
 #      QUAY_USER: 'nleiva'
     secrets: inherit
 #  secrets:
