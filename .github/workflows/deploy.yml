@@ -14,6 +14,10 @@ on:
         description: Name of the image
         required: true
         type: string
+      EE_IMAGE_TAG:
+        description: Tag for the image
+        required: true
+        type: string
       EE_ANSIBLE_VERSION:
         description: 'Version of ansible to install'
         required: true
