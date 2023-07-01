@@ -1,2 +1,4 @@
 # include ara for optional test and CI reporting
 ara
+#ansible-runner
+#ansible==$EE_ANSIBLE_VERSION
