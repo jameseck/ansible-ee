@@ -22,6 +22,11 @@
       changed_when: false
       register: _installed_ansible_core
 
+    - name: Retrieve the installed version of ansible
+      ansible.builtin.shell: pip show ansible | awk "/Version/ {print $2}"
+      changed_when: false
+      register: _installed_ansible
+
     - name: Retrieve the installed version of ansible with pip
       ansible.builtin.shell: pip show ansible | awk "/Version/ {print $2}"
       changed_when: false
@@ -37,7 +42,7 @@
         that:
           - ansible_distribution == "CentOS"
           - ansible_distribution_release == "Stream"
-          - ansible_distribution_version == "8"
+          - ansible_distribution_version == "9"
           - ansible_python_version is version("3.8.0", ">=")
           # - query("community.general.collection_version", "community.general") is version("4.4.0", ">=")
           # ...

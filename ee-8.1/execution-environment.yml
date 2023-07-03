@@ -4,24 +4,28 @@ version: 3
 images:
   base_image:
     #name: quay.io/ansible/ansible-runner:stable-2.12-latest
-    name: registry.access.redhat.com/ubi9/python-311:latest
-
-#ansible_config: 'ansible.cfg'
+    #name: registry.access.redhat.com/ubi9/python-39:latest
+    name: quay.io/centos/centos:stream9
 
 dependencies:
-#  ansible_core:
-#    package_pip: ansible-core==$EE_ANSIBLE_VERSION
+  ansible_core:
+    package_pip: ansible==8.1.0
   ansible_runner:
     package_pip: ansible-runner
   galaxy: requirements.yml
   python: requirements.txt
   system: bindep.txt
+  python_interpreter:
+    python_path: '/usr/libexec/platform-python'
 
 additional_build_files:
   - src: bw
     dest: scripts
 
 additional_build_steps:
+  prepend_base:
+  - RUN /usr/libexec/platform-python -m ensurepip
+  - RUN pip3 install --upgrade pip setuptools
   append_base:
     - RUN mkdir /usr/share/ansible || true
   append_final:

@@ -8,7 +8,7 @@ on:
     branches:
       - main
     paths:
-      - 'ansible-ee/**'
+      - 'ee-*/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -32,10 +32,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #ansible_version: ${{ env.ANSIBLE_VERSIONS }}
         ansible_version:
-        - 2.10.7
-        - 8.1.0
+        - 2.10
+        - 8.1
     uses: jameseck/ansible-ee/.github/workflows/deploy.yml@main
     with:
       EE_FOLDER_NAME: ansible-ee
