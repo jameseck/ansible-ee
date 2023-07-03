@@ -109,7 +109,8 @@ jobs:
         id: push-to-registry
         uses: redhat-actions/push-to-registry@v2
         with:
-          image: ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }}
+          #image: ${{ env.EE_IMAGE_NAME }}:${{ inputs.EE_IMAGE_TAG }}
+          image: ${{ env.EE_IMAGE_NAME }}
           tags: ${{ steps.meta.outputs.tags }}
           registry: ${{ inputs.EE_REGISTRY }}
           username: ${{ inputs.EE_REGISTRY_USERNAME }}
