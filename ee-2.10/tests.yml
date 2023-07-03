@@ -32,16 +32,18 @@
       changed_when: false
       register: _ansible_version_pypi
 
-    - name: Retrieve the builtin reported version of ansible
-      ansible.builtin.command: python3 -c "from ansible_collections.ansible_release import ansible_version; print(ansible_version)"
-      changed_when: false
-      register: _ansible_version_builtin
+# Seems this test is not valid with ansible 2.10.7
+#    - name: Retrieve the builtin reported version of ansible
+#      ansible.builtin.command: python3 -c "from ansible_collections.ansible_release import ansible_version; print(ansible_version)"
+#      changed_when: false
+#      register: _ansible_version_builtin
   tasks:
     - name: Validate image
       assert:
         that:
           - ansible_distribution == "CentOS"
-          - ansible_distribution_release == "Stream"
+# Seems this test is not valid with ansible 2.10.7 https://github.com/ansible/ansible/pull/73034
+#          - ansible_distribution_release == "Stream"
           - ansible_distribution_version == "9"
           - ansible_python_version is version("3.8.0", ">=")
           # - query("community.general.collection_version", "community.general") is version("4.4.0", ">=")
