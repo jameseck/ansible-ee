@@ -37,7 +37,7 @@ jobs:
         - "8.1.0"
     uses: jameseck/ansible-ee/.github/workflows/deploy.yml@main
     with:
-      EE_FOLDER_NAME: ansible-ee
+      EE_FOLDER_NAME: ./ee-${{ matrix.ansible_version }}
       EE_IMAGE_NAME: ansible-ee
       #EE_IMAGE_NAME: ${{ (env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'master') && env.IMAGE_NAME || env.IMAGE_NAME + '-' env.BRANCH_NAME }}
       #EE_IMAGE_NAME: ${{ contains(fromJSON('["main", "master"]'), env.BRANCH_NAME) && env.IMAGE_NAME || env.IMAGE_NAME + '-' env.BRANCH_NAME }}
