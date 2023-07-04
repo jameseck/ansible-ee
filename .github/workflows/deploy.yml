@@ -117,6 +117,6 @@ jobs:
           image: ${{ env.EE_IMAGE_NAME }}
           tags: ${{ steps.meta.outputs.tags }}
           registry: ${{ inputs.EE_REGISTRY }}/${{ inputs.EE_REGISTRY_USERNAME }}
-          username: ${{ inputs.EE_REGISTRY_USERNAME }}
-          password: ${{ secrets.EE_REGISTRY_PASSWORD || secrets.GITHUB_TOKEN }}
+          #username: ${{ inputs.EE_REGISTRY_USERNAME }}
+          #password: ${{ secrets.EE_REGISTRY_PASSWORD || secrets.GITHUB_TOKEN }}
         if: ${{ github.event_name != 'pull_request' }} # Don't push on PR
