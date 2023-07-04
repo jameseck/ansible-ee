@@ -44,7 +44,7 @@ jobs:
       EE_IMAGE_TAG: ${{ matrix.ansible_version }}
       EE_ANSIBLE_VERSION: ${{ matrix.ansible_version }}
       EE_REGISTRY: ghcr.io
-      EE_REGISTRY_USERNAME: ${{ github.repository }}
+      EE_REGISTRY_USERNAME: jameseck
 #      QUAY_USER: 'nleiva'
     secrets: inherit
 #  secrets:
