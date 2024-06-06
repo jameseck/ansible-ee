@@ -3,3 +3,4 @@ ara
 #ansible-runner
 #ansible==$EE_ANSIBLE_VERSION
 jmespath
+paramiko
