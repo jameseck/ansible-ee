@@ -48,7 +48,7 @@ jobs:
     environment: deploy
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set EE_IMAGE_NAME
         run: |
@@ -60,7 +60,7 @@ jobs:
           fi
 
       - name: Set up Python 3.9
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
 
@@ -97,7 +97,7 @@ jobs:
 
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v4.4.0
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ inputs.EE_REGISTRY }}/${{ inputs.EE_REGISTRY_USERNAME }}/${{ env.EE_IMAGE_NAME }} #:${{ inputs.EE_IMAGE_TAG }}
