@@ -27,7 +27,7 @@ fi
 
 # If runninig 'bw unlock' or 'bw login', expect the session key to be output on success
 if [[ $1 == "unlock" || $1 == "login" ]]; then
-  unlockOut=$($bwcmd $1)
+  unlockOut=$($bwcmd $@)
   <<< $unlockOut grep -q BW_SESSION
   if [[ $? == "0" ]]; then
     echo "$1 successful" >&2
@@ -48,5 +48,5 @@ else
     # Avoids "Session key is invalid." being sent to the terminal
     unset BW_SESSION
   fi
-  $bwcmd $*
+  $bwcmd "$@"
  fi
