@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x
 
 # This script will proxy commands for the bitwarden CLI, intercepting them to
 # get or set a # session token for seamless use between shells and other programs.
@@ -27,7 +28,7 @@ fi
 
 # If runninig 'bw unlock' or 'bw login', expect the session key to be output on success
 if [[ $1 == "unlock" || $1 == "login" ]]; then
-  unlockOut=$($bwcmd $1)
+  unlockOut=$($bwcmd $@)
   <<< $unlockOut grep -q BW_SESSION
   if [[ $? == "0" ]]; then
     echo "$1 successful" >&2
@@ -48,5 +49,5 @@ else
     # Avoids "Session key is invalid." being sent to the terminal
     unset BW_SESSION
   fi
-  $bwcmd $*
+  $bwcmd "$@"
  fi
