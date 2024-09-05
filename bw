@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 
 # This script will proxy commands for the bitwarden CLI, intercepting them to
 # get or set a # session token for seamless use between shells and other programs.
