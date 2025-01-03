@@ -37,6 +37,7 @@ jobs:
         - "8.1.0"
         - "9.4.0"
         - "10.3.0"
+        - "11.1.0"
     uses: jameseck/ansible-ee/.github/workflows/deploy.yml@main
     with:
       EE_FOLDER_NAME: ./ee-${{ matrix.ansible_version }}
